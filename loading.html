@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Loading...</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width:100%; height:100%;
+    overflow:hidden;
+    background:#000;
+  }
+
+  #bg {
+    position:absolute; inset:0;
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+  }
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+
+<script>
+  var MAPS_DIR = "images/maps/";
+  var DEFAULT_IMAGE = "images/default.jpg";
+  var EXTENSIONS = ["jpg", "png", "jpeg"];
+
+  var bgEl = document.getElementById("bg");
+
+  function setBackground(url) {
+    bgEl.style.backgroundImage = "url('" + url + "')";
+  }
+
+  function loadMapImage(mapName) {
+    var tester = new Image();
+    var i = 0;
+
+    function tryNext() {
+      if (i >= EXTENSIONS.length) {
+        setBackground(DEFAULT_IMAGE);
+        return;
+      }
+      var path = MAPS_DIR + mapName + "." + EXTENSIONS[i];
+      tester.onload = function () { setBackground(path); };
+      tester.onerror = function () { i++; tryNext(); };
+      tester.src = path;
+    }
+
+    tryNext();
+  }
+
+  window.GameDetails = function (servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+    if (mapname) {
+      loadMapImage(mapname);
+    } else {
+      setBackground(DEFAULT_IMAGE);
+    }
+  };
+
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      if (bgEl.style.backgroundImage === "") {
+        setBackground(DEFAULT_IMAGE);
+      }
+    }, 500);
+  });
+</script>
+
+</body>
+</html>
